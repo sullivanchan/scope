@@ -178,7 +178,8 @@ export function rootReducer(state = initialState, action) {
       const topology = findTopologyById(state.get('topologies'), action.topologyId);
       if (topology) {
         const topologyId = topology.get('parentId') || topology.get('id');
-        if (state.getIn(['topologyOptions', topologyId, action.option]) !== action.value) {
+        const currentOption = state.getIn(['topologyOptions', topologyId, action.option]);
+        if (currentOption !== action.value) {
           state = clearNodes(state);
         }
         state = state.setIn(
