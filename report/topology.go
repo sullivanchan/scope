@@ -14,7 +14,7 @@ type Topology struct {
 	Label             string `json:"label,omitempty"`
 	LabelPlural       string `json:"label_plural,omitempty"`
 	Nodes             `json:"nodes"`
-	Controls          `json:"controls,omitempty"`
+	Controls          `json:"controls,omitempty" deepequal:"nil==empty"`
 	MetadataTemplates `json:"metadata_templates,omitempty"`
 	MetricTemplates   `json:"metric_templates,omitempty"`
 	TableTemplates    `json:"table_templates,omitempty"`
