@@ -1,7 +1,7 @@
 import React from 'react';
 import { Motion, spring } from 'react-motion';
 import { Map as makeMap } from 'immutable';
-import { line, curveBasis } from 'd3-shape';
+import { line, curveMonotoneY } from 'd3-shape';
 import { each, omit, times, constant } from 'lodash';
 
 import { NODES_SPRING_ANIMATION_CONFIG } from '../constants/animation';
@@ -15,7 +15,7 @@ import Edge from './edge';
 const WAYPOINTS_COUNT = 8;
 
 const spline = line()
-  .curve(curveBasis)
+  .curve(curveMonotoneY)
   .x(d => d.x)
   .y(d => d.y);
 
