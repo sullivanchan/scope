@@ -11,9 +11,9 @@ const log = debug('scope:nodes-layout');
 
 const topologyCaches = {};
 export const DEFAULT_MARGINS = {top: 0, left: 0};
-const NODE_SIZE_FACTOR = NODE_BASE_SIZE;
-const NODE_SEPARATION_FACTOR = 1.5 * NODE_BASE_SIZE;
-const RANK_SEPARATION_FACTOR = 2.5 * NODE_BASE_SIZE;
+const NODE_SIZE_FACTOR = 1; // NODE_BASE_SIZE;
+const NODE_SEPARATION_FACTOR = 2.5 * NODE_BASE_SIZE;
+const RANK_SEPARATION_FACTOR = 3.5 * NODE_BASE_SIZE;
 let layoutRuns = 0;
 let layoutRunsTrivial = 0;
 
@@ -101,14 +101,14 @@ function runLayoutEngine(graph, imNodes, imEdges) {
 
   graph.edges().forEach((graphEdge) => {
     const graphEdgeMeta = graph.edge(graphEdge);
-    const edge = edges.get(graphEdgeMeta.id);
-    let points = fromJS(graphEdgeMeta.points);
+    // const edge = edges.get(graphEdgeMeta.id);
+    const points = fromJS(graphEdgeMeta.points);
 
     // set beginning and end points to node coordinates to ignore node bounding box
-    const source = nodes.get(fromGraphNodeId(edge.get('source')));
-    const target = nodes.get(fromGraphNodeId(edge.get('target')));
-    points = points.mergeIn([0], {x: source.get('x'), y: source.get('y')});
-    points = points.mergeIn([points.size - 1], {x: target.get('x'), y: target.get('y')});
+    // const source = nodes.get(fromGraphNodeId(edge.get('source')));
+    // const target = nodes.get(fromGraphNodeId(edge.get('target')));
+    // points = points.mergeIn([0], {x: source.get('x'), y: source.get('y')});
+    // points = points.mergeIn([points.size - 1], {x: target.get('x'), y: target.get('y')});
 
     edges = edges.setIn([graphEdgeMeta.id, 'points'], points);
   });

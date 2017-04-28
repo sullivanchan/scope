@@ -1,7 +1,7 @@
 import React from 'react';
 import { Motion, spring } from 'react-motion';
 import { Map as makeMap } from 'immutable';
-import { line, curveMonotoneY } from 'd3-shape';
+import { line, curveCatmullRom } from 'd3-shape';
 import { each, omit, times, constant } from 'lodash';
 
 import { NODES_SPRING_ANIMATION_CONFIG } from '../constants/animation';
@@ -15,11 +15,12 @@ import Edge from './edge';
 const WAYPOINTS_COUNT = 8;
 
 const spline = line()
-  .curve(curveMonotoneY)
+  .curve(curveCatmullRom.alpha(0.9))
   .x(d => d.x)
   .y(d => d.y);
 
 const transformedEdge = (props, path) => (
+  // console.log(props.id, spline(path));
   <Edge {...props} path={spline(path)} />
 );
 
@@ -27,12 +28,19 @@ const transformedEdge = (props, path) => (
 // that is used by Motion to an array of waypoints in the format
 // [{x: 11, y: 22}, {x: 33, y: 44}] that can be used by D3.
 const waypointsMapToArray = (waypointsMap) => {
-  const waypointsArray = times(WAYPOINTS_COUNT, () => ({ x: 0, y: 0}));
+  const waypointsArray = times(WAYPOINTS_COUNT, () => ({ x: 0, y: 0 }));
   each(waypointsMap, (value, key) => {
     const [axis, index] = [key[0], key.slice(1)];
-    waypointsArray[index][axis] = value;
+    waypointsArray[index][axis] = value; // Math.round(value);
   });
-  return waypointsArray;
+
+  const result = [];
+  for (let i = 0; i < WAYPOINTS_COUNT; i += 1) {
+    if (waypointsArray[i].x) {
+      result.push(waypointsArray[i]);
+    }
+  }
+  return result;
 };
 
 
@@ -84,13 +92,17 @@ export default class EdgeContainer extends React.PureComponent {
     if (waypointsMissing > 0) {
       // Whenever there are some waypoints missing, we simply populate the beginning of the
       // array with the first element, as this leaves the curve interpolation unchanged.
-      nextWaypoints = times(waypointsMissing, constant(nextWaypoints[0])).concat(nextWaypoints);
+      nextWaypoints = times(waypointsMissing, constant({})).concat(nextWaypoints);
     } else if (waypointsMissing < 0) {
       // If there are 'too many' waypoints given by dagre, we select a sub-array of
       // uniformly distributed indices. Note that it is very important to keep the first
       // and the last endpoints in the array as they are the ones connecting the nodes.
       nextWaypoints = uniformSelect(nextWaypoints, WAYPOINTS_COUNT);
     }
+
+    // if (this.props.source !== this.props.target) {
+    //   nextWaypoints = sortBy(nextWaypoints, p => p.y);
+    // }
 
     let { waypointsMap } = this.state;
     nextWaypoints.forEach((point, index) => {
