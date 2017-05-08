@@ -123,8 +123,7 @@ func hasWeaveNet(r report.Report) bool {
 	hasNet := false
 	for _, n := range r.Overlay.Nodes {
 		overlayType, _ := report.ParseOverlayNodeID(n.ID)
-		if overlayType == report.WeaveOverlayPeerPrefix {
-			hasNet = true
+		if hasNet = (overlayType == report.WeaveOverlayPeerPrefix); hasNet {
 			break
 		}
 	}
